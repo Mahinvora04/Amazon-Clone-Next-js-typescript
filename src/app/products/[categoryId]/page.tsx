@@ -12,32 +12,25 @@ import Loader from '../../../components/Loader';
 import PaginationComponent from '../../../components/PaginationComponent';
 import useStore from '../../store';
 
-type Product = {
-  product_id: string;
-  category_id: string;
-  product_name: string;
-  description: string;
-  price: number;
-  image_url: string;
-  created_at: Date;
-  in_stock: number;
-  seller: string;
-  quantity: number;
-};
+ interface SelectedFilters {
+    seller: string[];
+    in_stock: number | null;
+    price: string;
+  }
 
 export default function Products() {
   const { categoryId } = useParams() as { categoryId: string };
   const {
     products,
     productsCount,
-    fetchProducts,
     categoryType,
+    wishlist,
+    cart,
+    fetchProducts,
     getCategoryTypeById,
     addToCart,
-    cart,
     getCartByUserId,
     addToWishlist,
-    wishlist,
     getWishlistByUserId,
     increaseProductQuantity,
     decreaseProductQuantity,
@@ -77,7 +70,7 @@ export default function Products() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleFilterFieldsChange = (data: []) => {
+  const handleFilterFieldsChange = (data: SelectedFilters) => {
     setFilterFields(data);
     setCurrentPage(1);
     setPayload((prevPayload) => ({ ...prevPayload, page: 1, filters: data }));
@@ -106,7 +99,7 @@ export default function Products() {
   };
 
   const totalPrice = cart.reduce(
-    (acc: number, product: Product) => acc + product.price * product.quantity,
+    (acc: number, product) => acc + product.price * product.quantity,
     0,
   );
 
@@ -135,12 +128,12 @@ export default function Products() {
           <p>No products found.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-            {products.map((product: Product) => {
+            {products.map((product) => {
               const isInCart = cart.some(
-                (item: Product) => item.product_id === product.product_id,
+                (item) => item.product_id === product.product_id,
               );
               const isInWishlist = wishlist.some(
-                (item: Product) => item.product_id === product.product_id,
+                (item) => item.product_id === product.product_id,
               );
               return (
                 <div
@@ -204,7 +197,7 @@ export default function Products() {
           </Link>
         </div>
         <ul className=" border-b border-gray-300">
-          {cart.map((product: Product) => {
+          {cart.map((product) => {
             return (
               <div
                 key={product.product_id}

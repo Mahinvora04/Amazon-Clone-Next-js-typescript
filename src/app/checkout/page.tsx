@@ -5,19 +5,6 @@ import React, { useEffect, useRef } from 'react';
 
 import useStore from '../store';
 
-type Product = {
-  product_id: string;
-  category_id: string;
-  product_name: string;
-  description: string;
-  price: number;
-  image_url: string;
-  created_at: Date;
-  in_stock: number;
-  seller: string;
-  quantity: number;
-};
-
 const Checkout = () => {
   const { cart, getCartByUserId, fetchUserProfile, fetchedUser } = useStore();
   const hasFetchedData = useRef(false);
@@ -34,7 +21,7 @@ const Checkout = () => {
   }, [fetchUserProfile, getCartByUserId]);
 
   const totalPrice = cart.reduce(
-    (acc: number, product: Product) => acc + product.price * product.quantity,
+    (acc, product) => acc + product.price * product.quantity,
     0,
   );
 

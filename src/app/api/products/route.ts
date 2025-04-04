@@ -6,6 +6,8 @@ import { db } from '@/lib/db';
 export async function POST(req: Request) {
   const payload = await req.json();
 
+  console.log("payload : ",payload)
+
   const page = payload.page || 1;
   const limit = payload.limit || 10;
   const offset = (page - 1) * limit;

@@ -8,25 +8,12 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import useStore from '../store';
 
-type Product = {
-  product_id: string;
-  category_id: string;
-  product_name: string;
-  description: string;
-  price: number;
-  image_url: string;
-  created_at: Date;
-  in_stock: number;
-  seller: string;
-  quantity: number;
-};
-
 const Cart = () => {
   const {
     cart,
+    wishlist,
     getCartByUserId,
     addToCart,
-    wishlist,
     getWishlistByUserId,
     addToWishlist,
     decreaseProductQuantity,
@@ -70,7 +57,7 @@ const Cart = () => {
   };
 
   const totalPrice = cart.reduce(
-    (acc: number, product: Product) => acc + product.price * product.quantity,
+    (acc, product) => acc + product.price * product.quantity,
     0,
   );
 
@@ -85,9 +72,9 @@ const Cart = () => {
           <p>Loading...</p>
         ) : cart.length > 0 ? (
           <ul className="space-y-4 border-b border-gray-300">
-            {cart.map((product: Product) => {
+            {cart.map((product) => {
               const isInWishlist = wishlist.some(
-                (item: Product) => item.product_id === product.product_id,
+                (item) => item.product_id === product.product_id,
               );
               return (
                 <div

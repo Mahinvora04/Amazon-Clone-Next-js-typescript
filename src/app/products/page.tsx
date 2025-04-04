@@ -20,27 +20,32 @@ type Product = {
   price: number;
   image_url: string;
   created_at: Date;
-  in_stock: number;
+  in_stock: 0 | 1 | null;
   seller: string;
   quantity: number;
 };
+interface SelectedFilters {
+  seller: string[];
+  in_stock: number | null;
+  price: string;
+}
 
 export default function Products() {
   const { categoryId } = useParams() as { categoryId: string };
   const {
     products,
-    fetchProducts,
-    productsCount,
-    addToCart,
     cart,
+    productsCount,
+    wishlist,
+    fetchProducts,
+    addToCart,
     getCartByUserId,
     addToWishlist,
-    wishlist,
     getWishlistByUserId,
     increaseProductQuantity,
     decreaseProductQuantity,
   } = useStore();
-  const [filterFields, setFilterFields] = useState([]);
+  const [filterFields, setFilterFields] = useState({});
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [payload, setPayload] = useState({
@@ -85,7 +90,7 @@ export default function Products() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleFilterFieldsChange = (data: []) => {
+  const handleFilterFieldsChange = (data: SelectedFilters) => {
     setFilterFields(data);
     setCurrentPage(1);
     setPayload((prevPayload) => ({

@@ -26,9 +26,8 @@ api.interceptors.response.use(
   },
 );
 
-interface FormDataType {
-  [key: string]: string;
-}
+// Interfaces for Types
+type FormDataType = FormData; // Now it directly allows FormData
 
 interface LoginData {
   email: string;
@@ -40,23 +39,107 @@ interface ProfilePayload {
   address: string;
 }
 
-const useStore = create((set) => ({
+interface Product {
+  product_id: string;
+  category_id: string;
+  product_name: string;
+  description: string;
+  price: number;
+  image_url: string;
+  created_at: Date;
+  in_stock: 0 | 1 | null;
+  seller: string;
+  quantity: number;
+}
+
+interface User {
+  name: string;
+  email: string;
+  contact: string;
+  address: string;
+}
+
+// Define types for filtering data
+interface FilterOptionsType {
+  sellerFilterValues: string[];
+  stockFilterValues: string[];
+  filterOptions: { label: string }[];
+}
+
+interface UserState {
+  token: string | null;
+  userId: string | null;
+  fetchedUser: User;
+}
+
+interface StoreState extends UserState, FilterOptionsType {
+  message: string;
+  products: Product[];
+  cart: Product[];
+  wishlist: Product[];
+  productsCount: number;
+  categoryType: {
+    category_type: string;
+    category_image: string;
+  };
+
+  categories: string[];
+
+  // API Calls
+  registerUser: (
+    formData: FormDataType,
+  ) => Promise<{ success: boolean; message?: string; error?: string }>;
+  loginUser: (
+    data: LoginData,
+  ) => Promise<{ success: boolean; message?: string; error?: string }>;
+  logoutUser: () => Promise<{
+    success: boolean;
+    message?: string;
+    error?: string;
+  }>;
+  fetchUserProfile: () => Promise<void>;
+  updateUserProfile: (
+    payload: ProfilePayload,
+  ) => Promise<{ success?: boolean; message?: string; error?: string }>;
+  fetchProducts: (
+    categoryId?: string | null,
+    payload?: object,
+  ) => Promise<void>;
+  getCategoryTypeById: (categoryId: string) => Promise<void>;
+  fetchCategories: () => Promise<void>;
+  fetchFilterOptions: (categoryId: string) => Promise<void>;
+
+  // Cart & Wishlist
+  addToCart: (productId: string) => Promise<{ success: boolean }>;
+  getCartByUserId: () => Promise<void>;
+  increaseProductQuantity: (productId: string) => Promise<{ success: boolean }>;
+  decreaseProductQuantity: (productId: string) => Promise<{ success: boolean }>;
+  addToWishlist: (productId: string) => Promise<{ success: boolean }>;
+  getWishlistByUserId: () => Promise<void>;
+
+  // Social Logins
+  loginWithGoogle: () => void;
+  loginWithGithub: () => void;
+  loginWithFacebook: () => void;
+}
+
+const useStore = create<StoreState>((set) => ({
   message: '',
   token: null,
   userId: null,
-  productsCount: null,
+  productsCount: NaN,
   categories: [],
   departments: [],
   products: [],
-  categoryType: [],
+  categoryType: { category_type: '', category_image: '' },
   filterOptions: [],
   sellerFilterValues: [],
   stockFilterValues: [],
-  fetchedUser: {},
+  fetchedUser: { name: '', address: '', contact: '', email: '' },
   cart: [],
   wishlist: [],
 
-  registerUser: async (formData: FormDataType) => {
+  registerUser: async (formData) => {
     set({ message: '' });
 
     try {
@@ -66,6 +149,11 @@ const useStore = create((set) => ({
       if (registerUserResponse?.data?.status === 200) {
         return { success: true, message: registerUserResponse?.data?.message };
       }
+
+      return {
+        success: false,
+        error: 'Registration failed. Please try again.',
+      };
     } catch (error) {
       return {
         success: false,
@@ -74,12 +162,17 @@ const useStore = create((set) => ({
     }
   },
 
-  loginUser: async (data: LoginData) => {
+  loginUser: async (data) => {
     try {
       const loginUserResponse = await api.post('/auth/login', data);
       if (loginUserResponse?.data?.status === 200) {
         return { success: true, message: loginUserResponse?.data?.message };
       }
+
+      return {
+        success: false,
+        error: 'Login failed. Please try again.',
+      };
     } catch (error) {
       return { success: false, error: (error as Error).message };
     }
@@ -91,6 +184,11 @@ const useStore = create((set) => ({
       if (logoutResponse?.data?.status === 200) {
         return { success: true, message: logoutResponse?.data?.message };
       }
+
+      return {
+        success: false,
+        error: 'Failed to logout. Please try again.',
+      };
     } catch (error) {
       return { success: false, error: (error as Error).message };
     }
@@ -102,14 +200,13 @@ const useStore = create((set) => ({
       if (fetchUserProfileResponse?.data?.status === 200) {
         const userData = fetchUserProfileResponse?.data?.userResult;
         set({ fetchedUser: userData });
-        return { success: true };
       }
     } catch (error) {
-      return { error: (error as Error).message };
+      console.error('Error fetching user profile:', (error as Error).message);
     }
   },
 
-  updateUserProfile: async (payload: ProfilePayload) => {
+  updateUserProfile: async (payload) => {
     try {
       const updateUserProfileResponse = await api.put('/users', payload);
       if (updateUserProfileResponse?.data?.status === 200) {
@@ -118,6 +215,10 @@ const useStore = create((set) => ({
           message: updateUserProfileResponse?.data?.message,
         };
       }
+      return {
+        success: false,
+        error: 'Failed to update profile. Please try again.',
+      };
     } catch (error) {
       return { error: (error as Error).message };
     }
@@ -202,6 +303,7 @@ const useStore = create((set) => ({
     } catch (error) {
       console.error('Error adding to cart:', (error as Error).message);
     }
+    return { success: false };
   },
 
   getCartByUserId: async () => {
@@ -231,6 +333,7 @@ const useStore = create((set) => ({
     } catch (error) {
       console.error('Error updating quantity:', (error as Error).message);
     }
+    return { success: false };
   },
 
   decreaseProductQuantity: async (productId: string) => {
@@ -247,6 +350,7 @@ const useStore = create((set) => ({
     } catch (error) {
       console.error('Error updating quantity:', (error as Error).message);
     }
+    return { success: false };
   },
 
   addToWishlist: async (productId: string) => {
@@ -260,6 +364,7 @@ const useStore = create((set) => ({
     } catch (error) {
       console.error('Error adding to wishlist:', (error as Error).message);
     }
+    return { success: false };
   },
 
   getWishlistByUserId: async () => {

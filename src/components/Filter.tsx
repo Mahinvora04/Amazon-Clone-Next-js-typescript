@@ -5,14 +5,14 @@ import { useEffect, useRef, useState } from 'react';
 
 import useStore from '../app/store';
 
-interface FilterProps {
-  handleFilterFieldsChange: (filters: SelectedFilters) => void;
-}
-
 interface SelectedFilters {
   seller: string[];
-  in_stock: number | null;
+  in_stock: 0 | 1 | null;
   price: string;
+}
+
+interface FilterProps {
+  handleFilterFieldsChange: (filters: SelectedFilters) => void;
 }
 
 const Filter: React.FC<FilterProps> = ({ handleFilterFieldsChange }) => {
@@ -83,7 +83,7 @@ const Filter: React.FC<FilterProps> = ({ handleFilterFieldsChange }) => {
   return (
     <div className="left-0 top-0 bg-white p-4 overflow-y-auto border-r border-gray-300 w-64">
       <ul className="space-y-2">
-        {filterOptions?.map((filter: { label: string }, index: number) => (
+        {filterOptions?.map((filter, index) => (
           <li key={index} className="transition duration-300 cursor-pointer">
             <label className="cursor-pointer font-semibold text-md">
               {filter.label}
@@ -148,7 +148,7 @@ const Filter: React.FC<FilterProps> = ({ handleFilterFieldsChange }) => {
             {filter.label === 'Availability' &&
               stockFilterValues?.length > 0 && (
                 <ul className="mt-2 space-y-1 text-gray-700">
-                  {stockFilterValues.map((stock: string, idx: number) => (
+                  {stockFilterValues.map((stock, idx) => (
                     <li key={idx} className="px-2 cursor-pointer text-sm">
                       <input
                         type="radio"
@@ -156,7 +156,7 @@ const Filter: React.FC<FilterProps> = ({ handleFilterFieldsChange }) => {
                         name="stock"
                         className="cursor-pointer"
                         checked={
-                          selectedFilters.in_stock ===
+                          (selectedFilters.in_stock ?? -1) ===
                           (stock === 'In stock' ? 1 : 0)
                         }
                         onChange={() => handleStockChange(stock)}
