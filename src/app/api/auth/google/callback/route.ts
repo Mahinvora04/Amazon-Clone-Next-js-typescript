@@ -1,12 +1,18 @@
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
+import { ResultSetHeader, RowDataPacket } from 'mysql2';
 import { nanoid } from 'nanoid';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 import { db } from '../../../../../lib/db';
 
-export async function GET(req) {
+type User = {
+  id: string;
+  email: string;
+};
+
+export async function GET(req: Request) {
   const cookieStore = await cookies();
   try {
     const url = new URL(req.url);
@@ -46,17 +52,17 @@ export async function GET(req) {
     });
 
     // Check if user exists
-    const [userResults] = await db.query(
-      'SELECT user_id, email FROM users WHERE email = ?',
+    const [userResults] = await db.query<RowDataPacket[]>(
+      'SELECT user_id as id, email FROM users WHERE email = ?',
       [user.email],
     );
 
-    let existingUser = userResults[0];
+    let existingUser = userResults[0] as User;
 
     //  if user does not exist then register user
     if (!existingUser || userResults.length === 0) {
       const userId = nanoid();
-      const [result] = await db.query(
+      const [result] = await db.query<ResultSetHeader>(
         'INSERT INTO users (user_id, name, email) VALUES (?, ?, ?)',
         [userId, user.name, user.email],
       );
@@ -74,7 +80,7 @@ export async function GET(req) {
     const response = NextResponse.redirect(new URL('/', req.url));
 
     cookieStore.set('authToken', jwtToken);
-    cookieStore.set('userId', existingUser.user_id);
+    cookieStore.set('userId', existingUser.id);
 
     return response;
   } catch (error) {

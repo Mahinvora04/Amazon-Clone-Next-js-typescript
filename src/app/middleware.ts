@@ -1,8 +1,9 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
-export async function middleware(request) {
-  const authToken = await cookies().get('authToken');
+export async function middleware(request: Request) {
+  const cookieStore = await cookies();
+  const authToken = cookieStore.get('authToken')?.value;
 
   if (!authToken) {
     return NextResponse.redirect(new URL('/login', request.url));
@@ -13,5 +14,5 @@ export async function middleware(request) {
 
 // Protect these routes
 export const config = {
-  matcher: ['/cart','/wishlist','/checkout', '/profile'],
+  matcher: ['/cart', '/wishlist', '/checkout', '/profile'],
 };

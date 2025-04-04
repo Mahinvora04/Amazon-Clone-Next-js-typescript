@@ -5,8 +5,18 @@ import { useEffect, useRef, useState } from 'react';
 
 import useStore from '../app/store';
 
-export default function Filter({ handleFilterFieldsChange }) {
-  const { categoryId } = useParams();
+interface FilterProps {
+  handleFilterFieldsChange: (filters: SelectedFilters) => void;
+}
+
+interface SelectedFilters {
+  seller: string[];
+  in_stock: number | null;
+  price: string;
+}
+
+const Filter: React.FC<FilterProps> = ({ handleFilterFieldsChange }) => {
+  const { categoryId } = useParams() as { categoryId: string };
   const {
     filterOptions,
     fetchFilterOptions,
@@ -14,7 +24,7 @@ export default function Filter({ handleFilterFieldsChange }) {
     sellerFilterValues,
   } = useStore();
 
-  const [selectedFilters, setSelectedFilters] = useState({
+  const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>({
     seller: [],
     in_stock: null,
     price: '',
@@ -29,7 +39,7 @@ export default function Filter({ handleFilterFieldsChange }) {
     }
   }, [categoryId, fetchFilterOptions]);
 
-  const handleSellerChange = (seller) => {
+  const handleSellerChange = (seller: string) => {
     setSelectedFilters((prevFilters) => {
       const updatedSellers = prevFilters.seller.includes(seller)
         ? prevFilters.seller.filter((s) => s !== seller)
@@ -39,14 +49,14 @@ export default function Filter({ handleFilterFieldsChange }) {
     });
   };
 
-  const handleStockChange = (stock) => {
+  const handleStockChange = (stock: string) => {
     setSelectedFilters((prevFilters) => ({
       ...prevFilters,
       in_stock: stock === 'In stock' ? 1 : 0,
     }));
   };
 
-  const handlePriceChange = (order) => {
+  const handlePriceChange = (order: string) => {
     setSelectedFilters((prevFilters) => ({
       ...prevFilters,
       price: order,
@@ -73,7 +83,7 @@ export default function Filter({ handleFilterFieldsChange }) {
   return (
     <div className="left-0 top-0 bg-white p-4 overflow-y-auto border-r border-gray-300 w-64">
       <ul className="space-y-2">
-        {filterOptions?.map((filter, index) => (
+        {filterOptions?.map((filter: { label: string }, index: number) => (
           <li key={index} className="transition duration-300 cursor-pointer">
             <label className="cursor-pointer font-semibold text-md">
               {filter.label}
@@ -114,7 +124,7 @@ export default function Filter({ handleFilterFieldsChange }) {
             {/* Seller Filter */}
             {filter.label === 'Seller' && sellerFilterValues?.length > 0 && (
               <ul className="mt-2 space-y-1 text-gray-700">
-                {sellerFilterValues.map((seller, idx) => (
+                {sellerFilterValues.map((seller: string, idx: number) => (
                   <li key={idx} className="px-2 cursor-pointer text-sm">
                     <input
                       type="checkbox"
@@ -138,7 +148,7 @@ export default function Filter({ handleFilterFieldsChange }) {
             {filter.label === 'Availability' &&
               stockFilterValues?.length > 0 && (
                 <ul className="mt-2 space-y-1 text-gray-700">
-                  {stockFilterValues.map((stock, idx) => (
+                  {stockFilterValues.map((stock: string, idx: number) => (
                     <li key={idx} className="px-2 cursor-pointer text-sm">
                       <input
                         type="radio"
@@ -182,4 +192,6 @@ export default function Filter({ handleFilterFieldsChange }) {
       </div>
     </div>
   );
-}
+};
+
+export default Filter;

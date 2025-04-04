@@ -3,8 +3,9 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 import { db } from '@/lib/db';
+import { RowDataPacket } from 'mysql2';
 
-export async function POST(req) {
+export async function POST(req:Request) {
   try {
     const cookieStore =await cookies();
     const userId = cookieStore.get('userId')?.value;
@@ -18,7 +19,7 @@ export async function POST(req) {
 
     const { productId } = await req.json(); 
 
-    const [existingCartItem] = await db.query(
+    const [existingCartItem] = await db.query<RowDataPacket[]>(
       'SELECT * FROM cart WHERE user_id = ? AND product_id = ?',
       [userId, productId],
     );

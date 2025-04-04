@@ -1,20 +1,23 @@
+import { RowDataPacket } from 'mysql2';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 import { db } from '@/lib/db';
+
+type User = {
+  user_id: string;
+};
 
 export async function GET() {
   try {
     const cookieStore = await cookies();
     const userIdCookie = cookieStore.get('userId')?.value;
 
-    console.log('cookie in users api : ' + userIdCookie);
-
     if (!userIdCookie) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const [userResults] = await db.query(
+    const [userResults] = await db.query<User[] & RowDataPacket[]>(
       'SELECT user_id, name, email, contact,address FROM users WHERE user_id = ?',
       [userIdCookie],
     );
@@ -36,7 +39,7 @@ export async function GET() {
 }
 
 // Update user profile
-export async function PUT(req) {
+export async function PUT(req: Request) {
   try {
     const cookieStore = await cookies();
     const userIdCookie = cookieStore.get('userId')?.value;

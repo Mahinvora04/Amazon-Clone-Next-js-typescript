@@ -1,12 +1,10 @@
+import { RowDataPacket } from 'mysql2';
 import { NextResponse } from 'next/server';
 
 import { db } from '@/lib/db';
 
-export async function POST(req, { params }) {
+export async function POST(req: Request) {
   const payload = await req.json();
-  const { categoryId } = await params;
-
-  console.log('payload : ', payload);
 
   const page = payload.page || 1;
   const limit = payload.limit || 10;
@@ -14,11 +12,10 @@ export async function POST(req, { params }) {
   const filters = payload.filters || {};
 
   try {
-    let query = 'SELECT * FROM products WHERE category_id = ?';
-    let countQuery =
-      'SELECT COUNT(*) AS total FROM products WHERE category_id = ?';
-    let queryParams = [categoryId];
-    let countParams = [categoryId];
+    let query = 'SELECT * FROM products WHERE 1=1';
+    let countQuery = 'SELECT COUNT(*) AS total FROM products WHERE 1=1';
+    const queryParams = [];
+    const countParams = [];
 
     if (filters.seller && filters.seller.length > 0) {
       const placeholders = filters.seller.map(() => '?').join(', ');
@@ -29,10 +26,11 @@ export async function POST(req, { params }) {
     }
 
     if (filters.in_stock !== null && filters.in_stock !== undefined) {
+      const stockValue = filters.in_stock === '1' ? 1 : 0;
       query += ` AND in_stock = ?`;
       countQuery += ` AND in_stock = ?`;
-      queryParams.push(filters.in_stock);
-      countParams.push(filters.in_stock);
+      queryParams.push(stockValue);
+      countParams.push(stockValue);
     }
 
     if (filters.price) {
@@ -47,28 +45,29 @@ export async function POST(req, { params }) {
     query += ` LIMIT ? OFFSET ?`;
     queryParams.push(limit, offset);
 
-    // total records
-    const [countResult] = await db.query(countQuery, countParams);
-    const totalRecords = countResult[0]?.total || 0;
+    // total count
+    const [countResult] = await db.query<RowDataPacket[]>(
+      countQuery,
+      countParams,
+    );
+    const totalRecords = countResult.length > 0 ? countResult[0].total : 0;
 
+    // Fetch products with filters and pagination
     const [products] = await db.query(query, queryParams);
-
-    if (products.length === 0) {
-      return NextResponse.json({
-        message: 'No products found',
-        success: false,
-        status: 404,
-      });
-    }
 
     return NextResponse.json({
       success: true,
       status: 200,
-      count: totalRecords,
       products,
+      count: totalRecords,
     });
   } catch (error) {
-    console.error('Error fetching products:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Error:', error);
+    return NextResponse.json(
+      {
+        error: error instanceof Error ? error.message : 'Internal Server Error',
+      },
+      { status: 500 },
+    );
   }
 }

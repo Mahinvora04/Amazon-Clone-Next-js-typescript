@@ -1,22 +1,20 @@
 import { NextResponse } from 'next/server';
 
 import { db } from '@/lib/db';
+import { RowDataPacket } from 'mysql2';
 
-export async function GET(req, { params }) {
-  const { categoryId } = await params;
-
+export async function GET() {
   try {
     const data = [
       { value: 'price', label: 'Price' },
       { value: 'seller', label: 'Seller' },
-      { value: 'in_stock', label: 'Availability' },
+      { value: 'availability', label: 'Availability' },
     ];
 
     const stockFilterValues = ['In stock', 'Out of stock'];
 
-    const [sellerFilterValues] = await db.query(
-      'SELECT DISTINCT seller FROM products WHERE category_id = ?',
-      [categoryId],
+    const [sellerFilterValues] = await db.query<RowDataPacket[]>(
+      'SELECT DISTINCT seller FROM products',
     );
 
     const sellerArray = sellerFilterValues.map((item) => item.seller);

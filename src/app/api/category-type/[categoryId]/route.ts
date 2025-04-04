@@ -1,12 +1,16 @@
+import { RowDataPacket } from 'mysql2';
 import { NextResponse } from 'next/server';
 
 import { db } from '@/lib/db';
 
-export async function GET(req, { params }) {
-  const { categoryId } = await params;
+export async function GET(
+  req: Request,
+  context: { params: { categoryId: string } },
+) {
+  const { categoryId } = await context.params;
 
   try {
-    const [category] = await db.query(
+    const [category] = await db.query<RowDataPacket[]>(
       'SELECT * FROM category WHERE category_id = ?',
       [categoryId],
     );

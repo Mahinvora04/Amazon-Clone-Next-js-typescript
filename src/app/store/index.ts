@@ -26,6 +26,20 @@ api.interceptors.response.use(
   },
 );
 
+interface FormDataType {
+  [key: string]: string;
+}
+
+interface LoginData {
+  email: string;
+  password: string;
+}
+
+interface ProfilePayload {
+  contact: string;
+  address: string;
+}
+
 const useStore = create((set) => ({
   message: '',
   token: null,
@@ -42,7 +56,7 @@ const useStore = create((set) => ({
   cart: [],
   wishlist: [],
 
-  registerUser: async (formData) => {
+  registerUser: async (formData: FormDataType) => {
     set({ message: '' });
 
     try {
@@ -53,18 +67,21 @@ const useStore = create((set) => ({
         return { success: true, message: registerUserResponse?.data?.message };
       }
     } catch (error) {
-      return { success: false, error: 'failed to register! ', error };
+      return {
+        success: false,
+        error: (error as Error).message,
+      };
     }
   },
 
-  loginUser: async (data) => {
+  loginUser: async (data: LoginData) => {
     try {
       const loginUserResponse = await api.post('/auth/login', data);
       if (loginUserResponse?.data?.status === 200) {
         return { success: true, message: loginUserResponse?.data?.message };
       }
     } catch (error) {
-      return { success: false, error: 'failed to login! ', error };
+      return { success: false, error: (error as Error).message };
     }
   },
 
@@ -75,7 +92,7 @@ const useStore = create((set) => ({
         return { success: true, message: logoutResponse?.data?.message };
       }
     } catch (error) {
-      return { success: false, error: 'Failed to log out', error };
+      return { success: false, error: (error as Error).message };
     }
   },
 
@@ -88,11 +105,11 @@ const useStore = create((set) => ({
         return { success: true };
       }
     } catch (error) {
-      return { error: 'Failed to fetch profile data', error };
+      return { error: (error as Error).message };
     }
   },
 
-  updateUserProfile: async (payload) => {
+  updateUserProfile: async (payload: ProfilePayload) => {
     try {
       const updateUserProfileResponse = await api.put('/users', payload);
       if (updateUserProfileResponse?.data?.status === 200) {
@@ -102,7 +119,7 @@ const useStore = create((set) => ({
         };
       }
     } catch (error) {
-      return { error: 'Failed to update profile', error };
+      return { error: (error as Error).message };
     }
   },
 
@@ -121,11 +138,11 @@ const useStore = create((set) => ({
         });
       }
     } catch (error) {
-      console.error('Fetch Error:', error);
+      console.error('Fetch Error:', (error as Error).message);
     }
   },
 
-  getCategoryTypeById: async (categoryId) => {
+  getCategoryTypeById: async (categoryId: string) => {
     try {
       const getCategoryTypeByIdResponse = await api.get(
         `category-type/${categoryId}`,
@@ -136,7 +153,7 @@ const useStore = create((set) => ({
         });
       }
     } catch (error) {
-      console.error('Fetch Error:', error);
+      console.error('Fetch Error:', (error as Error).message);
     }
   },
 
@@ -149,11 +166,11 @@ const useStore = create((set) => ({
         });
       }
     } catch (error) {
-      console.error('Failed to fetch categories!', error);
+      console.error('Failed to fetch categories!', (error as Error).message);
     }
   },
 
-  fetchFilterOptions: async (categoryId) => {
+  fetchFilterOptions: async (categoryId: string) => {
     let url = '/filter-options';
     if (categoryId) {
       url += `/${categoryId}`;
@@ -170,11 +187,11 @@ const useStore = create((set) => ({
         });
       }
     } catch (error) {
-      console.error('Fetch Error:', error);
+      console.error('Fetch Error:', (error as Error).message);
     }
   },
 
-  addToCart: async (productId) => {
+  addToCart: async (productId: string) => {
     try {
       const addToCartResponse = await axios.post('/api/cart/add', {
         productId: productId,
@@ -183,7 +200,7 @@ const useStore = create((set) => ({
         return { success: true };
       }
     } catch (error) {
-      console.error('Error adding to cart:', error);
+      console.error('Error adding to cart:', (error as Error).message);
     }
   },
 
@@ -196,11 +213,11 @@ const useStore = create((set) => ({
         });
       }
     } catch (error) {
-      console.error('Failed to fetch cart data!', error);
+      console.error('Failed to fetch cart data!', (error as Error).message);
     }
   },
 
-  increaseProductQuantity: async (productId) => {
+  increaseProductQuantity: async (productId: string) => {
     try {
       const increaseProductQuantityResponse = await axios.put(
         '/api/cart/update-quantity/increase',
@@ -212,11 +229,11 @@ const useStore = create((set) => ({
         return { success: true };
       }
     } catch (error) {
-      console.error('Error updating quantity:', error);
+      console.error('Error updating quantity:', (error as Error).message);
     }
   },
 
-  decreaseProductQuantity: async (productId) => {
+  decreaseProductQuantity: async (productId: string) => {
     try {
       const decreaseProductQuantityResponse = await axios.put(
         '/api/cart/update-quantity/decrease',
@@ -228,11 +245,11 @@ const useStore = create((set) => ({
         return { success: true };
       }
     } catch (error) {
-      console.error('Error updating quantity:', error);
+      console.error('Error updating quantity:', (error as Error).message);
     }
   },
 
-  addToWishlist: async (productId) => {
+  addToWishlist: async (productId: string) => {
     try {
       const addToWishlistResponse = await axios.post('/api/wishlist/add', {
         productId: productId,
@@ -241,7 +258,7 @@ const useStore = create((set) => ({
         return { success: true };
       }
     } catch (error) {
-      console.error('Error adding to wishlist:', error);
+      console.error('Error adding to wishlist:', (error as Error).message);
     }
   },
 
@@ -254,7 +271,7 @@ const useStore = create((set) => ({
         });
       }
     } catch (error) {
-      console.error('Failed to fetch wishlist data!', error);
+      console.error('Failed to fetch wishlist data!', (error as Error).message);
     }
   },
 

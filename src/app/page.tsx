@@ -1,15 +1,16 @@
 'use client';
 
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import Image from 'next/image';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 export default function Home() {
   const images = [
     'https://images-eu.ssl-images-amazon.com/images/G/31/img21/MA2025/GW/BAU/Unrec/PC/934044814._CB551384116_.jpg',
-    'https://images-eu.ssl-images-amazon.com/images/G/31/INSLGW/pc_common_12th._CB555377188_.jpg',  
+    'https://images-eu.ssl-images-amazon.com/images/G/31/INSLGW/pc_common_12th._CB555377188_.jpg',
     '/carousel/carousel-1.jpg',
     '/carousel/carousel-2.jpg',
     '/carousel/carousel-3.jpg',
@@ -34,7 +35,13 @@ export default function Home() {
         >
           {images.map((src, index) => (
             <SwiperSlide key={index}>
-              <img src={src} alt={`Slide ${index + 1}`} className="w-full object-cover" />
+              <Image
+                src={src}
+                alt={`Slide ${index + 1}`}
+                className="w-full object-cover"
+                height={300}
+                width={200}
+              />
             </SwiperSlide>
           ))}
         </Swiper>

@@ -1,12 +1,20 @@
+import { RowDataPacket } from 'mysql2';
 import { nanoid } from 'nanoid';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 import { db } from '@/lib/db';
 
-export async function POST(req) {
+type WishlistItem = {
+  wishlist_id: string;
+  user_id: string;
+  product_id: string;
+  quantity?: number;
+};
+
+export async function POST(req: Request) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const userId = cookieStore.get('userId')?.value;
 
     if (!userId) {
@@ -16,20 +24,22 @@ export async function POST(req) {
       );
     }
 
-    const { productId } = await req.json(); // Extract productId from request body
+    const { productId } = await req.json();
 
     // Check if the product already exists in the wishlist
-    const [existingWishlistItem] = await db.query(
-      'SELECT * FROM wishlist WHERE user_id = ? AND product_id = ?',
-      [userId, productId],
-    );
+    const [existingWishlistItem] = await db.query<
+      WishlistItem[] & RowDataPacket[]
+    >('SELECT * FROM wishlist WHERE user_id = ? AND product_id = ?', [
+      userId,
+      productId,
+    ]);
 
     if (existingWishlistItem.length > 0) {
       // Remove product from the wishlist
-      await db.query('DELETE FROM wishlist WHERE user_id = ? AND product_id = ?', [
-        userId,
-        productId,
-      ]);
+      await db.query(
+        'DELETE FROM wishlist WHERE user_id = ? AND product_id = ?',
+        [userId, productId],
+      );
 
       return NextResponse.json({
         success: true,

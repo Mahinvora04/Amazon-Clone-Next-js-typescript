@@ -1,12 +1,13 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { ResultSetHeader, RowDataPacket } from 'mysql2';
 import { nanoid } from 'nanoid';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 import { db } from '@/lib/db';
 
-export async function POST(req) {
+export async function POST(req: Request) {
   const cookieStore = await cookies();
   try {
     const formData = await req.formData();
@@ -18,7 +19,7 @@ export async function POST(req) {
     const address = formData.get('address');
 
     // Check if email already exists
-    const [existingUser] = await db.query(
+    const [existingUser] = await db.query<RowDataPacket[]>(
       'SELECT email FROM users WHERE email = ?',
       [email],
     );
@@ -31,10 +32,18 @@ export async function POST(req) {
     }
 
     const userId = nanoid();
+
+    if (!password || typeof password !== 'string') {
+      return NextResponse.json(
+        { error: 'Password is required and must be a string' },
+        { status: 400 },
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert user data into the database
-    const [result] = await db.query(
+    const [result] = await db.query<ResultSetHeader>(
       'INSERT INTO users (user_id, name, email, password,contact,address ) VALUES (?, ?, ?, ?, ?, ?)',
       [userId, full_name, email, hashedPassword, contact, address],
     );
@@ -47,7 +56,7 @@ export async function POST(req) {
     }
 
     const authToken = jwt.sign({ email }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
+      expiresIn: '7d',
     });
 
     cookieStore.set('authToken', authToken);

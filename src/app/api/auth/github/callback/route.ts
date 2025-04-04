@@ -1,11 +1,24 @@
 import jwt from 'jsonwebtoken';
+import { ResultSetHeader, RowDataPacket } from 'mysql2';
 import { nanoid } from 'nanoid';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 import { db } from '@/lib/db';
 
-export async function GET(req) {
+type User = {
+  id: string;
+  email: string;
+};
+
+type GithubEmail = {
+  email: string;
+  primary: boolean;
+  verified: boolean;
+  visibility: string | null;
+};
+
+export async function GET(req: Request) {
   const cookieStore = await cookies();
   try {
     const { searchParams } = new URL(req.url);
@@ -56,7 +69,7 @@ export async function GET(req) {
       headers: { Authorization: `Bearer ${access_token}` },
     });
 
-    const emails = await emailResponse.json();
+    const emails: GithubEmail[] = await emailResponse.json();
     const primaryEmail =
       emails.find((email) => email.primary)?.email || emails[0]?.email || null;
 
@@ -72,17 +85,17 @@ export async function GET(req) {
       expiresIn: '7d',
     });
 
-    const [userResults] = await db.query(
-      'SELECT user_id, email FROM users WHERE email = ?',
+    const [userResults] = await db.query<RowDataPacket[]>(
+      'SELECT user_id as id, email FROM users WHERE email = ?',
       [primaryEmail],
     );
 
-    existingUser = userResults[0];
+    existingUser = userResults[0] as User;
 
     if (!existingUser || userResults.length === 0) {
       const userId = nanoid();
 
-      const [result] = await db.query(
+      const [result] = await db.query<ResultSetHeader>(
         'INSERT INTO users (user_id, name , email ) VALUES (?, ?, ?)',
         [userId, user.name, primaryEmail],
       );
@@ -98,7 +111,7 @@ export async function GET(req) {
     }
 
     cookieStore.set('authToken', jwtToken);
-    cookieStore.set('userId', existingUser.user_id);
+    cookieStore.set('userId', existingUser.id);
 
     const response = NextResponse.redirect(new URL('/', req.url));
 

@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 import { db } from '@/lib/db';
 
-export async function PUT(req) {
+export async function PUT(req:Request) {
   try {
     const cookieStore =await cookies();
     const userId = cookieStore.get('userId')?.value;
