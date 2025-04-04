@@ -127,7 +127,7 @@ const useStore = create<StoreState>((set) => ({
   message: '',
   token: null,
   userId: null,
-  productsCount: NaN,
+  productsCount: 0,
   categories: [],
   departments: [],
   products: [],

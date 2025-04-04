@@ -3,7 +3,10 @@ import { NextResponse } from 'next/server';
 
 import { db } from '@/lib/db';
 
-export async function GET(context: { params: { categoryId: string } }) {
+export async function GET(
+  req: Request,
+  context: { params: { categoryId: string } },
+) {
   const { categoryId } = await context.params;
 
   try {
