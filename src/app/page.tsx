@@ -39,8 +39,8 @@ export default function Home() {
                 src={src}
                 alt={`Slide ${index + 1}`}
                 className="w-full object-cover"
-                height={300}
-                width={200}
+                height={1000}
+                width={1000}
               />
             </SwiperSlide>
           ))}

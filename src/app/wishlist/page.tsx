@@ -6,25 +6,12 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import useStore from '@/app/store';
 
-type Product = {
-  product_id: string;
-  category_id: string;
-  product_name: string;
-  description: string;
-  price: number;
-  image_url: string;
-  created_at: Date;
-  in_stock: number;
-  seller: string;
-  quantity: number;
-};
-
 const Wishlist = () => {
   const {
     cart,
+    wishlist,
     getCartByUserId,
     addToCart,
-    wishlist,
     getWishlistByUserId,
     addToWishlist,
   } = useStore();
@@ -43,7 +30,7 @@ const Wishlist = () => {
       };
       fetchData();
     }
-  }, []);
+  }, [getCartByUserId,getWishlistByUserId]);
 
   const handleAddToCart = async (productId: string) => {
     await addToCart(productId);
@@ -65,9 +52,9 @@ const Wishlist = () => {
           <p>Loading...</p>
         ) : wishlist.length > 0 ? (
           <ul className="space-y-4">
-            {wishlist.map((product: Product) => {
+            {wishlist.map((product) => {
               const isInCart = cart.some(
-                (item: Product) => item.product_id === product.product_id,
+                (item) => item.product_id === product.product_id,
               );
               return (
                 <div

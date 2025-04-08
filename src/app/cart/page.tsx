@@ -34,7 +34,7 @@ const Cart = () => {
       };
       fetchData();
     }
-  }, []);
+  }, [getCartByUserId,getWishlistByUserId]);
 
   const handleAddToCart = async (productId: string) => {
     await addToCart(productId);

@@ -31,7 +31,7 @@ const Profile = () => {
     };
 
     loadUser();
-  }, [router, fetchUserProfile]);
+  }, [router, fetchedUser, fetchUserProfile]);
 
   // Effect to update state when fetchedUser changes
   useEffect(() => {
@@ -71,13 +71,22 @@ const Profile = () => {
           draggable
           theme="colored"
         />
-        <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md text-center">
-          <h2 className="text-2xl font-semibold text-gray-900 mt-4">
-            {fetchedUser.name}
-          </h2>
-          <p className="text-gray-500 text-sm">{fetchedUser.email}</p>
-
+        <div className="bg-white border border-gray-400 p-6 w-full max-w-md text-center">
           <div className="mt-4 text-left space-y-3">
+            <div className="flex items-center">
+              <span className="font-medium text-gray-700 w-32">Name</span>
+              <span className="text-gray-600">
+                {fetchedUser.name ? fetchedUser.name : 'N/A'}
+              </span>
+            </div>
+
+            <div className="flex items-center">
+              <span className="font-medium text-gray-700 w-32">Email</span>
+              <span className="text-gray-600">
+                {fetchedUser.email ? fetchedUser.email : 'N/A'}
+              </span>
+            </div>
+
             {/* Contact Field */}
             <div className="flex items-center">
               <span className="font-medium text-gray-700 w-32">

@@ -26,8 +26,7 @@ api.interceptors.response.use(
   },
 );
 
-// Interfaces for Types
-type FormDataType = FormData; // Now it directly allows FormData
+type FormDataType = FormData;
 
 interface LoginData {
   email: string;
@@ -59,7 +58,6 @@ interface User {
   address: string;
 }
 
-// Define types for filtering data
 interface FilterOptionsType {
   sellerFilterValues: string[];
   stockFilterValues: string[];
