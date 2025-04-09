@@ -5,9 +5,9 @@ import { db } from '@/lib/db';
 
 export async function GET(
   req: Request,
-  context: { params: { categoryId: string } },
+  { params }: { params: { categoryId: string } },
 ) {
-  const { categoryId } = await context.params;
+  const { categoryId } = params;
 
   try {
     const [category] = await db.query<RowDataPacket[]>(
