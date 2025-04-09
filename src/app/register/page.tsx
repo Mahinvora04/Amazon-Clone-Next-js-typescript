@@ -67,8 +67,6 @@ export default function Register() {
       const response = await registerUser(formData);
       if (response.success) {
         router.push('/');
-      } else {
-        console.error('Registration failed:', response.message);
       }
     } catch (error) {
       console.error('Error during registration:', error);

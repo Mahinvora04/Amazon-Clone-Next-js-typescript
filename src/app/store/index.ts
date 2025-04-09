@@ -27,7 +27,6 @@ api.interceptors.response.use(
 );
 
 type FormDataType = FormData;
-
 interface LoginData {
   email: string;
   password: string;
@@ -86,10 +85,8 @@ interface StoreState extends UserState, FilterOptionsType {
     category_type: string;
     category_image: string;
   };
-
   categories: Category[];
 
-  // API Calls
   registerUser: (
     formData: FormDataType,
   ) => Promise<{ success: boolean; message?: string; error?: string }>;
