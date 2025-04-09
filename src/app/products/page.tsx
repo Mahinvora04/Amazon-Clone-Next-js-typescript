@@ -7,9 +7,11 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import Filter from '../../components/Filter';
-import Loader from '../../components/Loader';
-import PaginationComponent from '../../components/PaginationComponent';
+// import SearchComponent from '@/components/SearchComponent';
+
+import Filter from '@/components/Filter';import Loader from '@/components/Loader';
+import PaginationComponent from '@/components/PaginationComponent';
+
 import useStore from '../store';
 
 type Product = {
@@ -143,6 +145,7 @@ export default function Products() {
               <h1 className="text-3xl font-bold m-5 text-center sm:text-left">
                 All Products
               </h1>
+              {/* <SearchComponent products={products} /> */}
               <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                 {products.map((product: Product) => {
                   const isInCart = cart.some(
@@ -157,7 +160,7 @@ export default function Products() {
                       className="flex flex-col sm:flex-row items-center p-4"
                     >
                       <Image
-                        src={product.image_url || 'default-product.png'}
+                        src={product.image_url}
                         alt={product.product_name}
                         className="w-60 h-auto object-cover bg-gray-100 p-5"
                         width={300}

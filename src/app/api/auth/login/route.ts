@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const authToken = jwt.sign({ email }, process.env.JWT_SECRET, {
+    const authToken = jwt.sign({ email }, process.env.JWT_SECRET as string, {
       expiresIn: '7d',
     });
 

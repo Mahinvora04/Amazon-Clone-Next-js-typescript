@@ -1,9 +1,7 @@
 'use client';
 
 import 'flatpickr/dist/flatpickr.min.css';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
 
 import useStore from '../store';
 
@@ -13,7 +11,6 @@ type User = {
 };
 
 const Profile = () => {
-  const router = useRouter();
   const { fetchedUser, fetchUserProfile, updateUserProfile } = useStore();
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -31,7 +28,8 @@ const Profile = () => {
     };
 
     loadUser();
-  }, [router, fetchedUser, fetchUserProfile]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Effect to update state when fetchedUser changes
   useEffect(() => {
@@ -51,40 +49,39 @@ const Profile = () => {
       fetchUserProfile();
     } catch (err) {
       console.error('Error updating profile:', err);
-      toast.error('Something went wrong!');
     }
   };
 
   if (error) return <p className="text-red-500 text-center mt-6">{error}</p>;
+
   if (!fetchedUser)
     return <p className="text-center text-gray-600 mt-6">Loading...</p>;
 
   return (
     <>
       <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          closeOnClick
-          pauseOnHover
-          draggable
-          theme="colored"
-        />
         <div className="bg-white border border-gray-400 p-6 w-full max-w-md text-center">
           <div className="mt-4 text-left space-y-3">
             <div className="flex items-center">
               <span className="font-medium text-gray-700 w-32">Name</span>
-              <span className="text-gray-600">
-                {fetchedUser.name ? fetchedUser.name : 'N/A'}
-              </span>
+              <input
+                name="name"
+                value={fetchedUser.name || ''}
+                onChange={handleChange}
+                disabled={true}
+                className="w-full border rounded-lg p-3 text-gray-600 disabled:cursor-not-allowed disabled:border-0"
+              />
             </div>
 
             <div className="flex items-center">
               <span className="font-medium text-gray-700 w-32">Email</span>
-              <span className="text-gray-600">
-                {fetchedUser.email ? fetchedUser.email : 'N/A'}
-              </span>
+              <input
+                name="email"
+                value={fetchedUser.email || ''}
+                onChange={handleChange}
+                disabled={true}
+                className="w-full border rounded-lg p-3 text-gray-600 disabled:cursor-not-allowed disabled:border-0"
+              />
             </div>
 
             {/* Contact Field */}
@@ -92,37 +89,27 @@ const Profile = () => {
               <span className="font-medium text-gray-700 w-32">
                 Contact No.
               </span>
-              {isEditing ? (
-                <input
-                  name="contact"
-                  value={editedUser.contact || ''}
-                  onChange={handleChange}
-                  placeholder="Enter contact no."
-                  className="w-full border rounded-lg p-3 text-black focus:ring-2 focus:ring-cyan-400"
-                />
-              ) : (
-                <span className="text-gray-600">
-                  {fetchedUser.contact ? fetchedUser.contact : 'N/A'}
-                </span>
-              )}
+              <input
+                name="contact"
+                value={editedUser.contact || ''}
+                onChange={handleChange}
+                placeholder="Enter contact no."
+                disabled={!isEditing}
+                className="w-full border rounded-lg p-3 text-gray-600 focus:ring-2 focus:ring-cyan-400  disabled:cursor-not-allowed disabled:border-0"
+              />
             </div>
 
             {/* Address Field */}
             <div className="flex items-center">
               <span className="font-medium text-gray-700 w-32">Address</span>
-              {isEditing ? (
-                <input
-                  name="address"
-                  value={editedUser.address || ''}
-                  onChange={handleChange}
-                  placeholder="Enter address"
-                  className="w-full border rounded-lg p-3 text-black focus:ring-2 focus:ring-cyan-400"
-                />
-              ) : (
-                <span className="text-gray-600">
-                  {fetchedUser.address ? fetchedUser.address : 'N/A'}
-                </span>
-              )}
+              <input
+                name="address"
+                value={editedUser.address || ''}
+                onChange={handleChange}
+                placeholder="Enter address"
+                disabled={!isEditing}
+                className="w-full border rounded-lg p-3 text-gray-600 focus:ring-2 focus:ring-cyan-400 disabled:cursor-not-allowed disabled:border-0"
+              />
             </div>
           </div>
 

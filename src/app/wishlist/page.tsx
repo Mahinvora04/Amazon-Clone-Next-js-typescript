@@ -30,7 +30,8 @@ const Wishlist = () => {
       };
       fetchData();
     }
-  }, [getCartByUserId,getWishlistByUserId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleAddToCart = async (productId: string) => {
     await addToCart(productId);

@@ -47,7 +47,7 @@ export async function GET(req: Request) {
     );
 
     // Generate JWT token
-    const jwtToken = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET, {
+    const jwtToken = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET as string, {
       expiresIn: '7d',
     });
 
