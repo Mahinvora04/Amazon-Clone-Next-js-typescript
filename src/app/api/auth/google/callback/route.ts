@@ -5,8 +5,7 @@ import { nanoid } from 'nanoid';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
-import { db } from '../../../../../lib/db';
-
+import { db } from '@/lib/db'; 
 type User = {
   id: string;
   email: string;

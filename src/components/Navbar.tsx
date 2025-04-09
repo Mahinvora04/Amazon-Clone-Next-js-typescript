@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import useStore from '../app/store';
+import useStore from '@/app/store';
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -13,10 +13,10 @@ export default function Navbar() {
   const [isCategoryOffcanvasOpen, setIsCategoryOffcanvasOpen] = useState(false);
   const router = useRouter();
   const {
-    logoutUser,
     categories,
-    fetchCategories,
     fetchedUser,
+    logoutUser,
+    fetchCategories,
     fetchUserProfile,
   } = useStore();
 

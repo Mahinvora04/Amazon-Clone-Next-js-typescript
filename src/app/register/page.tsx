@@ -10,7 +10,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { ToastContainer } from 'react-toastify';
 import * as z from 'zod';
 
-import useStore from '../store/index';
+import useStore from '../store';
 
 type Data = {
   full_name: string;

@@ -7,10 +7,10 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import Filter from '../../../components/Filter';
-import Loader from '../../../components/Loader';
-import PaginationComponent from '../../../components/PaginationComponent';
-import useStore from '../../store';
+import Filter from '@/components/Filter';
+import Loader from '@/components/Loader';
+import PaginationComponent from '@/components/PaginationComponent';
+import useStore from '@/app/store';
 
 interface SelectedFilters {
   seller: string[];

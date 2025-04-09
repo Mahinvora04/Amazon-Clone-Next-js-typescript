@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
-import useStore from '../app/store';
+import useStore from '@/app/store';
 
 interface SelectedFilters {
   seller: string[];

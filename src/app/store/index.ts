@@ -70,6 +70,12 @@ interface UserState {
   fetchedUser: User;
 }
 
+interface Category {
+  category_id: string;
+  category_image: string;
+  category_type: string;
+}
+
 interface StoreState extends UserState, FilterOptionsType {
   message: string;
   products: Product[];
@@ -81,7 +87,7 @@ interface StoreState extends UserState, FilterOptionsType {
     category_image: string;
   };
 
-  categories: string[];
+  categories: Category[];
 
   // API Calls
   registerUser: (
