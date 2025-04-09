@@ -1,10 +1,10 @@
 import { RowDataPacket } from 'mysql2';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 import { db } from '@/lib/db';
 
 export async function GET(
-  req: Request,
+  req: NextRequest,
   context: { params: { categoryId: string } },
 ) {
   const categoryId = context.params.categoryId;
