@@ -57,7 +57,7 @@ export default function Navbar() {
                   href="/wishlist"
                   className="hover:text-gray-300 transition"
                 >
-                  {fetchedUser?.name?.split(' ')[0]} 's Wishlist
+                  {fetchedUser?.name?.split(' ')[0]} &apos;s Wishlist
                 </Link>
               </>
             )}

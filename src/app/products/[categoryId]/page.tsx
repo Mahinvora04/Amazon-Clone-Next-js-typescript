@@ -12,11 +12,11 @@ import Loader from '../../../components/Loader';
 import PaginationComponent from '../../../components/PaginationComponent';
 import useStore from '../../store';
 
- interface SelectedFilters {
-    seller: string[];
-    in_stock: number | null;
-    price: string;
-  }
+interface SelectedFilters {
+  seller: string[];
+  in_stock: number | null;
+  price: string;
+}
 
 export default function Products() {
   const { categoryId } = useParams() as { categoryId: string };
@@ -35,7 +35,6 @@ export default function Products() {
     increaseProductQuantity,
     decreaseProductQuantity,
   } = useStore();
-  const isLoading = false;
   const [filterFields, setFilterFields] = useState({});
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -44,10 +43,16 @@ export default function Products() {
     limit: pageSize,
     filters: filterFields,
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchProducts(categoryId, payload);
-    getCategoryTypeById(categoryId);
+    const loadData = async () => {
+      await fetchProducts(categoryId, payload);
+      await getCategoryTypeById(categoryId);
+      setIsLoading(false);
+    };
+
+    loadData();
   }, [categoryId, fetchProducts, getCategoryTypeById, payload]);
 
   useEffect(() => {
@@ -103,9 +108,9 @@ export default function Products() {
     0,
   );
 
-  return isLoading ? (
-    <Loader />
-  ) : (
+  if (isLoading) return <Loader />;
+
+  return (
     <div className="flex mx-auto p-4 bg-white text-black">
       <div className="hidden lg:block w-full lg:w-1/4">
         <Filter handleFilterFieldsChange={handleFilterFieldsChange} />

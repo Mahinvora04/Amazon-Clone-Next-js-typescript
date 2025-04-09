@@ -3,6 +3,8 @@
 import 'flatpickr/dist/flatpickr.min.css';
 import { useEffect, useState } from 'react';
 
+import Loader from '@/components/Loader';
+
 import useStore from '../store';
 
 type User = {
@@ -15,12 +17,17 @@ const Profile = () => {
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState({} as User);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadUser = async () => {
       try {
-        await fetchUserProfile();
-        setEditedUser(fetchedUser);
+        const loadData = async () => {
+          await fetchUserProfile();
+          setEditedUser(fetchedUser);
+          setIsLoading(false);
+        };
+        loadData();
       } catch (err) {
         console.error('Error fetching profile:', err);
         setError('Failed to fetch profile');
@@ -54,8 +61,7 @@ const Profile = () => {
 
   if (error) return <p className="text-red-500 text-center mt-6">{error}</p>;
 
-  if (!fetchedUser)
-    return <p className="text-center text-gray-600 mt-6">Loading...</p>;
+  if (isLoading) return <Loader />;
 
   return (
     <>

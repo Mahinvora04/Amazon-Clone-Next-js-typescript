@@ -7,9 +7,8 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-// import SearchComponent from '@/components/SearchComponent';
-
-import Filter from '@/components/Filter';import Loader from '@/components/Loader';
+import Filter from '@/components/Filter';
+import Loader from '@/components/Loader';
 import PaginationComponent from '@/components/PaginationComponent';
 
 import useStore from '../store';
@@ -55,11 +54,14 @@ export default function Products() {
     limit: pageSize,
     filters: filterFields,
   });
-
-  const isLoading = false;
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchProducts();
+    const loadData = async () => {
+      await fetchProducts();
+      setIsLoading(false);
+    };
+    loadData();
   }, [fetchProducts]);
 
   useEffect(() => {
@@ -129,9 +131,9 @@ export default function Products() {
     0,
   );
 
-  return isLoading ? (
-    <Loader />
-  ) : (
+  if (isLoading) return <Loader />;
+
+  return (
     <div className="flex p-4 bg-white text-black">
       <div className="hidden lg:block w-full lg:w-1/4">
         <Filter handleFilterFieldsChange={handleFilterFieldsChange} />
@@ -145,7 +147,6 @@ export default function Products() {
               <h1 className="text-3xl font-bold m-5 text-center sm:text-left">
                 All Products
               </h1>
-              {/* <SearchComponent products={products} /> */}
               <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                 {products.map((product: Product) => {
                   const isInCart = cart.some(

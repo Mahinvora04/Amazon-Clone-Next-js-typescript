@@ -6,6 +6,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 
+import Loader from '@/components/Loader';
+
 import useStore from '../store';
 
 const Cart = () => {
@@ -19,7 +21,7 @@ const Cart = () => {
     decreaseProductQuantity,
     increaseProductQuantity,
   } = useStore();
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   const hasFetchedData = useRef(false);
@@ -30,11 +32,11 @@ const Cart = () => {
       const fetchData = async () => {
         await getCartByUserId();
         await getWishlistByUserId();
-        setLoading(false);
+        setIsLoading(false);
       };
       fetchData();
     }
-  }, [getCartByUserId,getWishlistByUserId]);
+  }, [getCartByUserId, getWishlistByUserId]);
 
   const handleAddToCart = async (productId: string) => {
     await addToCart(productId);
@@ -61,6 +63,8 @@ const Cart = () => {
     0,
   );
 
+  if (isLoading) return <Loader />;
+
   return (
     <div className="p-4 bg-gray-100 text-black flex flex-col lg:flex-row">
       {/* Left Section - Cart Items */}
@@ -68,9 +72,7 @@ const Cart = () => {
         <h2 className="text-2xl font-bold mb-4 text-center sm:text-left pb-4 border-b border-gray-300">
           Shopping Cart
         </h2>
-        {loading ? (
-          <p>Loading...</p>
-        ) : cart.length > 0 ? (
+        {cart.length > 0 ? (
           <ul className="space-y-4 border-b border-gray-300">
             {cart.map((product) => {
               const isInWishlist = wishlist.some(
