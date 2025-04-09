@@ -1,6 +1,7 @@
 'use client';
 
 import Cookies from 'js-cookie';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -25,6 +26,7 @@ export default function Navbar() {
     setIsLoggedIn(!!token);
     fetchCategories();
     fetchUserProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleLogout = async () => {
@@ -40,10 +42,12 @@ export default function Navbar() {
       <nav className="bg-gray-900 text-white px-6 py-4 shadow-md w-full">
         <div className="container mx-auto flex justify-between items-center">
           <Link href="/" className="text-2xl font-bold flex items-center">
-            <img
-              src="../../logo/amazon_logo.png"
+            <Image
+              src="/logo/amazon_logo.png"
               alt="amazon logo"
               className="w-24 h-auto"
+              height={200}
+              width={300}
             />
           </Link>
           <div className="flex space-x-6 items-center">
