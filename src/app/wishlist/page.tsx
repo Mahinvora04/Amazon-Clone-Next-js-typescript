@@ -47,6 +47,18 @@ const Wishlist = () => {
 
   if (isLoading) return <Loader />;
 
+  if (wishlist.length === 0)
+    return (
+      <div className="mx-auto p-4 bg-gray-100 text-black">
+        <div className="bg-white m-5 p-5">
+          <h2 className="text-2xl font-bold mb-4 text-center sm:text-left pb-4 border-b border-gray-300">
+            Wishlist
+          </h2>
+          <div className="w-3xl">Your wishlist is Empty.</div>
+        </div>
+      </div>
+    );
+
   return (
     <div className="mx-auto p-4 bg-gray-100 text-black">
       <div className="bg-white m-5 p-5">

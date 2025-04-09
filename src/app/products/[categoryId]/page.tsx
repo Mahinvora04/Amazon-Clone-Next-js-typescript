@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import Filter from '@/components/Filter';
 import Loader from '@/components/Loader';
 import PaginationComponent from '@/components/PaginationComponent';
+
 import useStore from '@/app/store';
 
 interface SelectedFilters {
@@ -110,6 +111,9 @@ export default function Products() {
 
   if (isLoading) return <Loader />;
 
+  if (products.length === 0)
+    return <div className="w-3xl">No products found.</div>;
+
   return (
     <div className="flex mx-auto p-4 bg-white text-black">
       <div className="hidden lg:block w-full lg:w-1/4">
@@ -129,58 +133,55 @@ export default function Products() {
             height={200}
           />
         )}
-        {products.length === 0 ? (
-          <p>No products found.</p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-            {products.map((product) => {
-              const isInCart = cart.some(
-                (item) => item.product_id === product.product_id,
-              );
-              const isInWishlist = wishlist.some(
-                (item) => item.product_id === product.product_id,
-              );
-              return (
-                <div
-                  key={product.product_id}
-                  className="flex flex-col sm:flex-row items-center p-4"
-                >
-                  <Image
-                    src={product.image_url || 'default-product.png'}
-                    alt={product.product_name}
-                    className="w-60 h-auto object-cover bg-gray-100 p-5"
-                    width={300}
-                    height={200}
-                  />
-                  <div className="flex-1 mt-4 sm:mt-0 sm:ml-4 text-center sm:text-left">
-                    <h2 className="text-2xl">{product.product_name}</h2>
-                    <p className="tex t-gray-600">{product.description}</p>
-                    <p className="text-3xl mt-2">&#8377;{product.price}</p>
-                    <p
-                      className={`bg-gray-200 w-fit px-4 rounded-4xl mt-2 mx-auto sm:mx-0 text-center text-sm ${product.in_stock ? 'text-green-600' : 'text-red-600'}`}
-                    >
-                      {product.in_stock ? 'In stock' : 'Out of stock'}
-                    </p>
-                    <p className="text-gray-600 pt-2">{product.seller}</p>
 
-                    <button
-                      onClick={() => handleAddToCart(product.product_id)}
-                      className={`rounded-4xl px-4 py-1 mt-3 bg-amber-300 hover:cursor-pointer`}
-                    >
-                      {isInCart ? 'Added to Cart' : 'Add to Cart'}
-                    </button>
-                    <button
-                      onClick={() => handleAddToWishlist(product.product_id)}
-                      className={`px-2 text-md mt-3 text-blue-800 hover:cursor-pointer`}
-                    >
-                      {isInWishlist ? 'Added to Wishlist' : 'Add to Wishlist'}
-                    </button>
-                  </div>
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+          {products.map((product) => {
+            const isInCart = cart.some(
+              (item) => item.product_id === product.product_id,
+            );
+            const isInWishlist = wishlist.some(
+              (item) => item.product_id === product.product_id,
+            );
+            return (
+              <div
+                key={product.product_id}
+                className="flex flex-col sm:flex-row items-center p-4"
+              >
+                <Image
+                  src={product.image_url || 'default-product.png'}
+                  alt={product.product_name}
+                  className="w-60 h-auto object-cover bg-gray-100 p-5"
+                  width={300}
+                  height={200}
+                />
+                <div className="flex-1 mt-4 sm:mt-0 sm:ml-4 text-center sm:text-left">
+                  <h2 className="text-2xl">{product.product_name}</h2>
+                  <p className="tex t-gray-600">{product.description}</p>
+                  <p className="text-3xl mt-2">&#8377;{product.price}</p>
+                  <p
+                    className={`bg-gray-200 w-fit px-4 rounded-4xl mt-2 mx-auto sm:mx-0 text-center text-sm ${product.in_stock ? 'text-green-600' : 'text-red-600'}`}
+                  >
+                    {product.in_stock ? 'In stock' : 'Out of stock'}
+                  </p>
+                  <p className="text-gray-600 pt-2">{product.seller}</p>
+
+                  <button
+                    onClick={() => handleAddToCart(product.product_id)}
+                    className={`rounded-4xl px-4 py-1 mt-3 bg-amber-300 hover:cursor-pointer`}
+                  >
+                    {isInCart ? 'Added to Cart' : 'Add to Cart'}
+                  </button>
+                  <button
+                    onClick={() => handleAddToWishlist(product.product_id)}
+                    className={`px-2 text-md mt-3 text-blue-800 hover:cursor-pointer`}
+                  >
+                    {isInWishlist ? 'Added to Wishlist' : 'Add to Wishlist'}
+                  </button>
                 </div>
-              );
-            })}
-          </div>
-        )}
+              </div>
+            );
+          })}
+        </div>
 
         <PaginationComponent
           totalDataCount={productsCount}
