@@ -55,13 +55,19 @@ export default function Products() {
     filters: filterFields,
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    const loadData = async () => {
-      await fetchProducts();
-      setIsLoading(false);
-    };
-    loadData();
+    try {
+      const loadData = async () => {
+        await fetchProducts();
+        setIsLoading(false);
+      };
+      loadData();
+    } catch (err) {
+      console.error('Error fetching products :', err);
+      setError('Failed to fetch products');
+    }
   }, [fetchProducts]);
 
   useEffect(() => {
@@ -135,6 +141,8 @@ export default function Products() {
 
   if (products.length === 0)
     return <div className="w-3xl">No products found.</div>;
+
+  if (error) return <p className="text-red-500 text-center mt-6">{error}</p>;
 
   return (
     <div className="flex p-4 bg-white text-black">

@@ -18,19 +18,25 @@ const Wishlist = () => {
     addToWishlist,
   } = useStore();
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
   const router = useRouter();
 
   const hasFetchedData = useRef(false);
 
   useEffect(() => {
-    if (!hasFetchedData.current) {
-      hasFetchedData.current = true;
-      const fetchData = async () => {
-        await getCartByUserId();
-        await getWishlistByUserId();
-        setIsLoading(false);
-      };
-      fetchData();
+    try {
+      if (!hasFetchedData.current) {
+        hasFetchedData.current = true;
+        const fetchData = async () => {
+          await getCartByUserId();
+          await getWishlistByUserId();
+          setIsLoading(false);
+        };
+        fetchData();
+      }
+    } catch (err) {
+      console.error('Error fetching wishlist data:', err);
+      setError('Failed to fetch wishlist');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -46,6 +52,8 @@ const Wishlist = () => {
   };
 
   if (isLoading) return <Loader />;
+
+  if (error) return <p className="text-red-500 text-center mt-6">{error}</p>;
 
   if (wishlist.length === 0)
     return (

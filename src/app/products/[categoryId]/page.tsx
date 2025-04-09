@@ -45,15 +45,21 @@ export default function Products() {
     filters: filterFields,
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    const loadData = async () => {
-      await fetchProducts(categoryId, payload);
-      await getCategoryTypeById(categoryId);
-      setIsLoading(false);
-    };
+    try {
+      const loadData = async () => {
+        await fetchProducts(categoryId, payload);
+        await getCategoryTypeById(categoryId);
+        setIsLoading(false);
+      };
 
-    loadData();
+      loadData();
+    } catch (err) {
+      console.error('Error fetching products :', err);
+      setError('Failed to fetch products');
+    }
   }, [categoryId, fetchProducts, getCategoryTypeById, payload]);
 
   useEffect(() => {
@@ -113,6 +119,8 @@ export default function Products() {
 
   if (products.length === 0)
     return <div className="w-3xl">No products found.</div>;
+
+  if (error) return <p className="text-red-500 text-center mt-6">{error}</p>;
 
   return (
     <div className="flex mx-auto p-4 bg-white text-black">
