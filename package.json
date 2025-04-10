@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -45,6 +45,7 @@
     "@commitlint/config-conventional": "^19.7.1",
     "@eslint/eslintrc": "^3",
     "@netlify/next": "^1.4.9",
+    "@netlify/plugin-nextjs": "^5.10.4",
     "@tailwindcss/postcss": "^4",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/js-cookie": "^3.0.6",
