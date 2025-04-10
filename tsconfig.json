@@ -25,3 +25,4 @@
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/store/index.ts", "src/components/LayoutWrapper.jsx", "src/components/Filter.tsx", "src/components/Navbar.tsx"],
   "exclude": ["node_modules"]
 }
+

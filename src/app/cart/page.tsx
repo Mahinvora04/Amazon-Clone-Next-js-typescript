@@ -6,9 +6,9 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 
-import Loader from '@/components/Loader';
-
 import useStore from '../store';
+
+import CartShimmer from '@/@core/components/skeleton/CartShimmer';
 
 const Cart = () => {
   const {
@@ -69,7 +69,7 @@ const Cart = () => {
     0,
   );
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <CartShimmer />;
 
   if (error) return <p className="text-red-500 text-center mt-6">{error}</p>;
 

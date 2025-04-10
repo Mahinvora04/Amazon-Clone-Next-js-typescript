@@ -5,9 +5,10 @@ import { db } from '@/lib/db';
 
 export async function GET(
   req: NextRequest,
-  context: { params: { categoryId: string } },
+  { params }: { params: { categoryId: string } },
 ) {
-  const categoryId = context.params.categoryId;
+  const param = await params;
+  const categoryId = param.categoryId;
 
   try {
     const [category] = await db.query<RowDataPacket[]>(

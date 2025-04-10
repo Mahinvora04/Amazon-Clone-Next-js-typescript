@@ -8,10 +8,12 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import Filter from '@/components/Filter';
-import Loader from '@/components/Loader';
 import PaginationComponent from '@/components/PaginationComponent';
 
 import useStore from '../store';
+
+import ProductsShimmer from '@/@core/components/skeleton/ProductsShimmer';
+import SideCartShimmer from '@/@core/components/skeleton/SideCartShimmer';
 
 type Product = {
   product_id: string;
@@ -137,7 +139,7 @@ export default function Products() {
     0,
   );
 
-  if (isLoading) return <Loader />;
+  // if (isLoading) return <ProductsShimmer />;
 
   if (products.length === 0)
     return <div className="w-3xl">No products found.</div>;
@@ -149,7 +151,9 @@ export default function Products() {
       <div className="hidden lg:block w-full lg:w-1/4">
         <Filter handleFilterFieldsChange={handleFilterFieldsChange} />
       </div>
-      <div>
+      {isLoading ? (
+        <ProductsShimmer />
+      ) : (
         <div>
           <h1 className="text-3xl font-bold m-5 text-center sm:text-left">
             All Products
@@ -202,86 +206,97 @@ export default function Products() {
               );
             })}
           </div>
+
+          <PaginationComponent
+            totalDataCount={productsCount}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            handlePageChange={handlePageChange}
+            handlePageSizeChange={handlePageSizeChange}
+          />
         </div>
-        <PaginationComponent
-          totalDataCount={productsCount}
-          pageSize={pageSize}
-          currentPage={currentPage}
-          handlePageChange={handlePageChange}
-          handlePageSizeChange={handlePageSizeChange}
-        />
-      </div>
+      )}
+
       <div className="hidden lg:block w-full lg:w-1/7 border-l border-gray-300">
-        <div className="text-center">
-          <p className="text-sm">Subtotal</p>
-          <p className="font-bold text-red-700"> &#8377;{totalPrice}</p>
-          <Link
-            href="/cart"
-            className="border px-6 py-1 w-fit rounded-3xl text-sm"
-          >
-            Go to cart
-          </Link>
-        </div>
-        <ul className=" border-b border-gray-300">
-          {cart.map((product: Product) => {
-            return (
-              <div
-                key={product.product_id}
-                className="flex flex-col items-center p-4"
+        {isLoading ? (
+          <SideCartShimmer />
+        ) : (
+          <>
+            <div className="text-center">
+              <p className="text-sm">Subtotal</p>
+              <p className="font-bold text-red-700"> &#8377;{totalPrice}</p>
+              <Link
+                href="/cart"
+                className="border px-6 py-1 w-fit rounded-3xl text-sm"
               >
-                <Image
-                  src={product.image_url || 'default-product.png'}
-                  alt={product.product_name}
-                  className="w-25 h-auto object-cover"
-                  width={300}
-                  height={200}
-                />
-                <div className="flex flex-col mt-4 sm:mt-0 text-center">
-                  <p className="text-xl mt-2 text-center">
-                    &#8377;{product.price}
-                  </p>
-                  <p className="text-gray-600 pt-2 flex flex-col items-center justify-center text-center md:flex-row sm:justify-start sm:items-center space-x-3">
-                    {/* Quantity Selector */}
-                    <span className="inline-flex items-center space-x-3 rounded-4xl border-4 border-amber-300 px-2 py-1">
-                      {product.quantity > 1 ? (
-                        <button
-                          className="text-lg font-bold text-black px-2 hover:cursor-pointer"
-                          onClick={() =>
-                            handleDecreaseQuantity(product.product_id)
-                          }
-                        >
-                          −
-                        </button>
-                      ) : (
-                        <>
+                Go to cart
+              </Link>
+            </div>
+
+            <ul className=" border-b border-gray-300">
+              {cart.map((product: Product) => {
+                return (
+                  <div
+                    key={product.product_id}
+                    className="flex flex-col items-center p-4"
+                  >
+                    <Image
+                      src={product.image_url || 'default-product.png'}
+                      alt={product.product_name}
+                      className="w-25 h-auto object-cover"
+                      width={300}
+                      height={200}
+                    />
+                    <div className="flex flex-col mt-4 sm:mt-0 text-center">
+                      <p className="text-xl mt-2 text-center">
+                        &#8377;{product.price}
+                      </p>
+                      <p className="text-gray-600 pt-2 flex flex-col items-center justify-center text-center md:flex-row sm:justify-start sm:items-center space-x-3">
+                        {/* Quantity Selector */}
+                        <span className="inline-flex items-center space-x-3 rounded-4xl border-4 border-amber-300 px-2 py-1">
+                          {product.quantity > 1 ? (
+                            <button
+                              className="text-lg font-bold text-black px-2 hover:cursor-pointer"
+                              onClick={() =>
+                                handleDecreaseQuantity(product.product_id)
+                              }
+                            >
+                              −
+                            </button>
+                          ) : (
+                            <>
+                              <button
+                                className="text-lg font-bold text-black px-2 hover:cursor-pointer"
+                                onClick={() =>
+                                  handleAddToCart(product.product_id)
+                                }
+                              >
+                                {' '}
+                                <FontAwesomeIcon icon={faTrash} />
+                              </button>
+                            </>
+                          )}
+                          <span className="text-sm font-medium text-gray-700">
+                            {product.quantity}
+                          </span>
+
                           <button
                             className="text-lg font-bold text-black px-2 hover:cursor-pointer"
-                            onClick={() => handleAddToCart(product.product_id)}
+                            onClick={() =>
+                              handleIncreaseQuantity(product.product_id)
+                            }
                           >
-                            {' '}
-                            <FontAwesomeIcon icon={faTrash} />
+                            +
                           </button>
-                        </>
-                      )}
-                      <span className="text-sm font-medium text-gray-700">
-                        {product.quantity}
-                      </span>
-
-                      <button
-                        className="text-lg font-bold text-black px-2 hover:cursor-pointer"
-                        onClick={() =>
-                          handleIncreaseQuantity(product.product_id)
-                        }
-                      >
-                        +
-                      </button>
-                    </span>
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </ul>
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </ul>
+          </>
+        )}
       </div>
     </div>
   );

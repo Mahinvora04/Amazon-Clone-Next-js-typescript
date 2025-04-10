@@ -4,8 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 
-import Loader from '@/components/Loader';
-
+import WishlistShimmer from '@/@core/components/skeleton/WishlistShimmer';
 import useStore from '@/app/store';
 
 const Wishlist = () => {
@@ -51,7 +50,7 @@ const Wishlist = () => {
     await getWishlistByUserId();
   };
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <WishlistShimmer />;
 
   if (error) return <p className="text-red-500 text-center mt-6">{error}</p>;
 

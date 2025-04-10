@@ -25,7 +25,9 @@ export default function Navbar() {
     const token = Cookies.get('authToken');
     setIsLoggedIn(!!token);
     fetchCategories();
-    fetchUserProfile();
+    if (token) {
+      fetchUserProfile();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

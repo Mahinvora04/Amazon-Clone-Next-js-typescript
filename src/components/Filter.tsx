@@ -3,6 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
+import FilterShimmer from '@/@core/components/skeleton/FilterShimmer';
 import useStore from '@/app/store';
 
 interface SelectedFilters {
@@ -29,13 +30,19 @@ const Filter: React.FC<FilterProps> = ({ handleFilterFieldsChange }) => {
     in_stock: null,
     price: '',
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   const hasFetched = useRef(false);
 
   useEffect(() => {
-    if (!hasFetched.current) {
-      fetchFilterOptions(categoryId);
-      hasFetched.current = true;
+    try {
+      if (!hasFetched.current) {
+        fetchFilterOptions(categoryId);
+        hasFetched.current = true;
+      }
+      setIsLoading(false);
+    } catch {
+      console.log('failed to fetch');
     }
   }, [categoryId, fetchFilterOptions]);
 
@@ -79,6 +86,8 @@ const Filter: React.FC<FilterProps> = ({ handleFilterFieldsChange }) => {
       price: '',
     });
   };
+
+  if (isLoading) return <FilterShimmer />;
 
   return (
     <div className="left-0 top-0 bg-white p-4 overflow-y-auto border-r border-gray-300 w-64">
