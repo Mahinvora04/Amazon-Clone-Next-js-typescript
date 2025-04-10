@@ -5,7 +5,7 @@ import { db } from '@/lib/db';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { categoryId: string } },
+  { params }: { params: { categoryId: string | null } },
 ) {
   const param = await params;
   const categoryId = param.categoryId;
