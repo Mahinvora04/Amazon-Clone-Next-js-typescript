@@ -1,13 +1,13 @@
 import { RowDataPacket } from 'mysql2';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 import { db } from '@/lib/db';
 
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { categoryId: string | null } },
+  req: Request,
+  context: { params: { categoryId: string } },
 ) {
-  const categoryId = { params };
+  const { categoryId } = await context.params;
 
   try {
     const [category] = await db.query<RowDataPacket[]>(
