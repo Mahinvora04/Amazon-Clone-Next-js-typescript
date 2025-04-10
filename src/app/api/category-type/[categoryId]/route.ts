@@ -7,8 +7,7 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { categoryId: string | null } },
 ) {
-  const param = await params;
-  const categoryId = param.categoryId;
+  const categoryId = { params };
 
   try {
     const [category] = await db.query<RowDataPacket[]>(
